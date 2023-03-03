@@ -1,4 +1,4 @@
-# Kubernetes Trainee Exercise
+# Devops Trainee Roadmap (early Work in Progress)
 
 This exercise has different steps to learn certain aspects of Kubernetes
 
