@@ -1,0 +1,33 @@
+trigger:
+- dev
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - script: |
+        echo "Building application"
+      displayName: 'Build'
+
+- stage: Test
+  dependsOn: Build
+  jobs:
+  - job: Test
+    steps:
+    - script: |
+        echo "Running unit tests"
+      displayName: 'Unit tests'
+    - script: |
+        echo "Running integration tests"
+      displayName: 'Integration tests'
+
+- stage: Deploy
+  dependsOn: Test
+  jobs:
+  - job: Deploy
+    steps:
+    - script: |
+        echo "Deploying application"
+      displayName: 'Deploy'
+

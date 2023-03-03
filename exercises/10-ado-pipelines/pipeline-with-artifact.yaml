@@ -1,0 +1,59 @@
+trigger:
+- dev
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+- group: 'trainee-var-group'
+
+stages:
+- stage: Build
+  jobs:
+  - job: dummy
+    steps:
+    - script: |
+        echo "dummy"
+      displayName: 'dummy'
+  - job: Build
+    steps:
+    - script: |
+        echo "Building application"
+        mkdir -p $(Build.ArtifactStagingDirectory)/bin
+        touch $(Build.ArtifactStagingDirectory)/bin/app.sh
+        echo "$(trainee)" > $(Build.ArtifactStagingDirectory)/bin/app.sh
+      displayName: 'Build'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/bin'
+        ArtifactName: 'app'
+      displayName: 'Publish artifact'
+
+- stage: Deploy
+  jobs:
+  - job: dummy
+    steps:
+    - script: |
+        echo "dummy"
+      displayName: 'dummy'
+  - job: Deploy
+    steps:
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        artifactName: 'app'
+        downloadPath: '$(System.ArtifactsDirectory)/'
+      displayName: 'Download artifact'
+    - script: |
+        echo "Deploying application"
+      displayName: 'Deploy'
+    - script: |
+        echo "Extracting artifact content:"
+        ls -la $(System.ArtifactsDirectory)/
+        unzip $(System.ArtifactsDirectory)/app.zip -d $(System.ArtifactsDirectory)/
+        ls -la $(System.ArtifactsDirectory)/
+        cat $(System.ArtifactsDirectory)/app/app.sh
+        echo "barfoo" > $(System.ArtifactsDirectory)/app/app.sh
+        cat $(System.ArtifactsDirectory)/app/app.sh
+      displayName: 'Extract artifact'
+
+
